@@ -23,21 +23,38 @@ app.use(express.json());
           const users = database.collection("users");
           const apoinmentCartdata = database.collection("apoin_Cart_data");
           
-          //service data getting
+          //service data getting===============1
          app.get("/service",async(req,res)=>{
             const curser= services.find({});
             const result=await curser.toArray();
             res.send(result)
          })
+
+
+          //Make service data by insert ======================2
+         app.post("/servicecart",async(req,res)=>{
+             const service=req.body;
+            const result=await apoinmentCartdata.insertOne(service)
+            console.log('service',result);
+            res.send(result)
+         })
           
-        //apoinment insert of apoinment form 
+        //apoinment insert of apoinment form ===============1
         app.post("/apoinment",async(req,res)=>{
             const curser=req.body;
             const result=await apoinment.insertOne(curser);
             res.send(result);
         })
 
-        //apoinment booking data by user email 
+        //All apoinment booking data=====================2
+        app.get("/apoinment",async(req,res)=>{
+            const curser= apoinment.find({});
+            const result=await curser.toArray();
+            res.send(result);
+        })
+
+
+        //apoinment booking data by user email ============3
         app.get("/apoinment",async(req,res)=>{
             const email=req.query.email;
             const query= {email:email};
@@ -46,20 +63,31 @@ app.use(express.json());
             res.send(result);
         })
 
-        //apoinment cart data gettin
+        //apoinment cart data gettin=======================4
         app.get("/cartdata",async(req,res)=>{
             const curser= apoinmentCartdata.find({});
             const result=await curser.toArray();
             res.send(result)
         })
-        //users api data insert by post
 
+
+        //users api data insert by post=======================1
         app.post("/users",async(req,res)=>{
             const curser=req.body;
             const result=await users.insertOne(curser);
             res.send(result);
         })
-        //cheking admin with email
+
+
+        //all users api data getting ===========================2
+        app.get("/users",async(req,res)=>{
+            const curser= users.find({});
+            const result=await curser.toArray();
+            res.send(result);
+        })
+
+
+        //cheking admin with email==========================3
         app.get("/users/:email",async(req,res)=>{
             const email= req.params.email;
             const query= {email:email}
@@ -73,7 +101,7 @@ app.use(express.json());
             res.send({admin:isAdmin});
         })
 
-        ///user cheeking and not duplecate
+        ///user cheeking and not duplecate====================4
         app.put("/users",async(req,res)=>{
             const user=req.body;
             const filter={email:user.email};
@@ -82,7 +110,9 @@ app.use(express.json());
             const result=await users.updateOne(filter,updateDoc,options);
             res.send(result);
         })
-        ///user make Admin
+
+
+        ///user make Admin=============================5
         app.put("/users/admin",async(req,res)=>{
             const user=req.body;
             const filter={email:user.email};
